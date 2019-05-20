@@ -8,7 +8,7 @@ import client2
 
 app = Flask(__name__)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=True)
 app.config["MONGO_URI"] = "mongodb://atpos_user:atpos_password@cluster0-shard-00-00-j6ym9.mongodb.net:27017,cluster0-shard-00-01-j6ym9.mongodb.net:27017,cluster0-shard-00-02-j6ym9.mongodb.net:27017/clientes?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
 mongo = PyMongo(app)
 users = mongo.db.users
@@ -23,7 +23,7 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.route('/cliente/', methods=['POST', 'DELETE', 'GET'])
 def cliente():
-    print(request.headers)  
+    print(request.headers)
     if request.method == 'POST':
         data = request.get_json()
         username = data.get("usuario", "")
