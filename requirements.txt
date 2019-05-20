@@ -1,0 +1,4 @@
+set FLASK_APP=hello.py
+pip install Flask
+pip install celery
+pip install -U "celery[redis]"
