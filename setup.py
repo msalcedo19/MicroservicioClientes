@@ -8,7 +8,7 @@ import client2
 
 app = Flask(__name__)
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000, debug=False)
 app.config["MONGO_URI"] = "mongodb://atpos_user:atpos_password@cluster0-shard-00-00-j6ym9.mongodb.net:27017,cluster0-shard-00-01-j6ym9.mongodb.net:27017,cluster0-shard-00-02-j6ym9.mongodb.net:27017/clientes?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true"
 mongo = PyMongo(app)
 users = mongo.db.users
@@ -23,7 +23,6 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.route('/cliente/', methods=['POST', 'DELETE', 'GET'])
 def cliente():
-    print(request.headers)
     if request.method == 'POST':
         data = request.get_json()
         username = data.get("usuario", "")
@@ -67,11 +66,32 @@ def cliente():
         return dumps(usuarios)
 
 
+@app.route('/cliente/editar/<username>', methods=['PUT'])
+def modificarCliente(username):
+    if request.method == 'PUT':
+        data = request.get_json()
+        user = users.find_one({"usuario": username})
+        if user is None:
+            return "El cliente con usuario %s no existe" % username
+        else:
+            new_username = ""
+            for key in data.keys():
+                if key != "usuario":
+                    query = {key: data.get(key)}
+                    users.update_one({"usuario": username}, {"$set": query})
+                else:
+                    new_username = data.get(key)
+            if new_username != "":
+                users.update_one({"usuario": username}, {"$set": {"usuario": new_username}})
+                return JSONEncoder().encode(users.find_one({"usuario": new_username}))
+            else:
+                return JSONEncoder().encode(users.find_one({"usuario": username}))
+
+
 @app.route('/cliente/agregarPuntos', methods=['PUT'])
 def agregarPuntos():
     if request.method == 'PUT':
         data = request.get_json()
-        print(request.headers)
         username = data.get("usuario", "")
         puntos = data.get("puntos", 0)
 
@@ -89,7 +109,6 @@ def agregarPuntos():
 def canjearPuntos():
     if request.method == 'PUT':
         data = request.get_json()
-        print(request.headers)
         username = data.get("usuario", "")
         puntos = data.get("puntos", 0)
 
