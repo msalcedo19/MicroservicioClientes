@@ -24,9 +24,10 @@ class JSONEncoder(json.JSONEncoder):
 
 @app.route('/cliente/', methods=['POST', 'DELETE', 'GET'])
 def cliente():
-    x = requests.post("http://157.230.14.37:8001/api/token-auth/", json={"cc": 1234, "password": 5})
-    arr = client2.validate_token(json.loads(x.text)["token"])
-    if arr.get("error", False) is True:
+    x = request.headers.get("token", None)
+    try:
+        arr = client2.validate_token(x)
+    except Exception:
         response = json.dumps({'message': 'Token invalido'})
         return response, 400
     if request.method == 'POST':
@@ -89,8 +90,12 @@ def cliente():
 
 @app.route('/cliente/editar/<username>', methods=['PUT'])
 def modificarCliente(username):
-    x = requests.post("http://157.230.14.37:8001/api/token-auth/", json={"cc": 1234, "password": 5})
-    arr = client2.validate_token(json.loads(x.text)["token"])
+    x = request.headers.get("token", None)
+    try:
+        arr = client2.validate_token(x)
+    except Exception:
+        response = json.dumps({'message': 'Token invalido'})
+        return response, 400
     if request.method == 'PUT':
         if arr["user"]["is_admin"] is True | arr["user"]["rol_administrador"] is True:
             data = request.get_json()
@@ -118,8 +123,12 @@ def modificarCliente(username):
 
 @app.route('/cliente/agregarPuntos', methods=['PUT'])
 def agregarPuntos():
-    x = requests.post("http://157.230.14.37:8001/api/token-auth/", json={"cc": 1234, "password": 5})
-    arr = client2.validate_token(json.loads(x.text)["token"])
+    x = request.headers.get("token", None)
+    try:
+        arr = client2.validate_token(x)
+    except Exception:
+        response = json.dumps({'message': 'Token invalido'})
+        return response, 400
     if request.method == 'PUT':
         if arr["user"]["is_admin"] is True | arr["user"]["rol_administrador"] is True | arr["user"]["rol_cajero"] is True:
             data = request.get_json()
@@ -142,8 +151,12 @@ def agregarPuntos():
 
 @app.route('/cliente/canjearPuntos', methods=['PUT'])
 def canjearPuntos():
-    x = requests.post("http://157.230.14.37:8001/api/token-auth/", json={"cc": 1234, "password": 5})
-    arr = client2.validate_token(json.loads(x.text)["token"])
+    x = request.headers.get("token", None)
+    try:
+        arr = client2.validate_token(x)
+    except Exception:
+        response = json.dumps({'message': 'Token invalido'})
+        return response, 400
     if request.method == 'PUT':
         if arr["user"]["is_admin"] is True | arr["user"]["rol_administrador"] is True | arr["user"]["rol_cajero"] is True:
             data = request.get_json()
