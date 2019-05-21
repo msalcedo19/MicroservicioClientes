@@ -93,7 +93,7 @@ def validate_token(token):
     validate_token_broker = MessageBrokerClient(queue_name='validar_jwt')
     body = json.dumps({'token': token})
     response = validate_token_broker.send_message(body)
-    response = json.loads(response)
+    response = json.loads(response.decode('utf-8'))
 
     if 'error' in response:
         raise Exception('Login fallido')
