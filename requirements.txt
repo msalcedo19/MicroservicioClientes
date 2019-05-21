@@ -1,4 +1,4 @@
-set FLASK_APP=hello.py
 pip install Flask
 pip install Flask-PyMongo
 pip install pika
+pip install requests
